@@ -22,8 +22,8 @@ type
         delete* {.importc:"$$$1".} : proc(target:JsObject, key:cstring) 
         watch* {.importc:"$$$1".} : proc(exp:cstring) {.varargs.}
         # event
-        on* {.importc:"$$$1".} : proc(event:cstring, cb:proc(args: varargs[cstring]))
-        emit* {.importc:"$$$1".} : proc(event:cstring, args: varargs[cstring])
+        on* {.importc:"$$$1".} : proc(event:cstring) {.varargs.}
+        emit* {.importc:"$$$1".} : proc(event:cstring) {.varargs.}
 
 var
     slient* {.importc: "Vue.config.$1".} :bool
@@ -77,9 +77,7 @@ when isMainModule:
         }
     ))
     # v.set(v, "a", 1.toJs)
-    # var p =  (n, o : js) => console.log(n)
-    proc p(n, o:js) = console.log("new value:", n)
-    v.watch("str", p)
+    v.watch("str", (n:cstring) => console.log(n))
     console.log(v)
     console.log(v.el)
     console.log(model)
