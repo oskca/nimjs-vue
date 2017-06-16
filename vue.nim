@@ -1,4 +1,4 @@
-import dom, jsffi, times, strutils, future
+import dom, jsffi, times, strutils, future, macros
 
 type 
     Option* = ref object
@@ -20,8 +20,7 @@ type
 
         set* {.importc:"$$$1".} : proc(target:JsObject, key:cstring, val: JsObject) 
         delete* {.importc:"$$$1".} : proc(target:JsObject, key:cstring) 
-        watch* {.importc:"$$$1".} : proc(exp:cstring, cb:proc(nVal, oVal: JsObject))
-        # watch* {.importc:"$$$1".} : proc(exp:cstring, cb:auto)
+        watch* {.importc:"$$$1".} : proc(exp:cstring) {.varargs.}
         # event
         on* {.importc:"$$$1".} : proc(event:cstring, cb:proc(args: varargs[cstring]))
         emit* {.importc:"$$$1".} : proc(event:cstring, args: varargs[cstring])
@@ -45,8 +44,7 @@ proc nextTick*(fn:any): void
 proc set*(target: any, key:cstring|SomeInteger, value: any): void  
 proc delete*(target: any, key:cstring|SomeInteger): void  
 proc directive*(name: cstring, definition: JsObject|proc()): void  
-proc filter*(name: cstring, definition: (cstring)->cstring)
-proc filter*(name: cstring, definition: (SomeNumber)->SomeNumber)
+proc filter*(name: cstring) {.varargs.}
 proc component*(name: cstring, definition: JsObject): void 
 proc use*(plugin: JsObject): void  
 proc mix*(mix: JsObject): void  
@@ -55,12 +53,12 @@ proc compile*(tmpl: cstring): void
 
 
 when isMainModule:
-    proc log(x: cstring|js|object|Element|ref object) {. importcpp:"console.log(@)" .}
+    import jsconsole
     type
         AO = ref object
             str: cstring
             i:int
-    log(Version)
+    console.log(Version)
     filter("upper2", (x:cstring)=> cstring(toUpperAscii($x)))
     # var data = AO{
     var model = AO{
@@ -73,16 +71,18 @@ when isMainModule:
         data: model,
         methods: js{
             click: proc() = 
-                log("111")
+                console.log("111")
                 model.str = "==============="
-                log("222")
+                console.log("222")
         }
     ))
     # v.set(v, "a", 1.toJs)
-    # v.watch("str", (n, o : js) => log(n))
-    log(v)
-    log(v.el)
-    log(model)
+    # var p =  (n, o : js) => console.log(n)
+    proc p(n, o:js) = console.log("new value:", n)
+    v.watch("str", p)
+    console.log(v)
+    console.log(v.el)
+    console.log(model)
 
     slient = false
     discard window.setInterval(proc() = 
@@ -90,7 +90,7 @@ when isMainModule:
     1000)
 
     var a = extend(Option(el:"#id"))
-    log(a)
+    console.log(a)
     nextTick(()=>log("nextTick123"))
     set(v, cstring("b"), 456)
-    log("xxxx", "zzzzzzz")
+    console.log("xxxx", "zzzzzzz")
