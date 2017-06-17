@@ -5,15 +5,25 @@
     "showOutput": "always",
     "tasks": [
         {
-            "taskName": "b",
+            "taskName": "build test",
             "command": "nim",
             "echoCommand": true,
             "args": [
                 "js",
+                "-d:release",
                 "-o:examples/test.js",
                 "examples/test.nim"
             ],
             "isBuildCommand": true
+        },
+        {
+            "taskName": "doc",
+            "command": "nim",
+            "args": [
+                "doc2",
+                "-o:doc.html",
+                "vue.nim"
+            ]
         }
     ]
 }
