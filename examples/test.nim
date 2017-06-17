@@ -5,7 +5,29 @@ type
         str: cstring
         i: int
         list: seq[(int,int)]
-# vue.filter("upper2", (x:cstring)=> cstring(toUpperAscii($x)))
+vue.filter("upper2", (x:cstring)=> cstring(toUpperAscii($x)))
+
+newDirective("my-directive", proc(el: Element, b: DirectiveBinding) =
+    el.innerHTML = b.value.to(cstring)
+)
+
+import sequtils
+
+newComponent("my", ComponentOption{
+    tmpl: """
+    <div>
+        Hello my {{ showName }}
+        <button @click="click">MyClick</button>
+        <button @click="click2">MyClick2</button>
+    </div>
+    """,
+    props: map(@["showName"], (x)=>cstring(x)),
+    methods: js{
+        click: ()=>log("component clicked"),
+        click2: bindMethod((that:js)=>log("com:", that.showName))
+    }
+})
+
 # var data = AO{
 var model = AO{
     str:"time: $# $#"%[getDateStr(), getClockStr()],
@@ -17,16 +39,17 @@ var model = AO{
     height: dom.window.screen.height
 }
 # var b = jsnew(Vue)
-var v = newVue(Option(
-    el:"#id", 
+var v = newVue(Option{
+    el:"#id",
     data: model,
     methods: js{
-        click: proc() = 
+        click: proc() =
             log("111")
             model.str = "==============="
             log("222")
-    }
-))
+    },
+    asdf:123
+})
 # v.set(v, "a", 1.toJs)
 v.watch("str", (n:cstring) => (log(n)))
 log(v,"xxx")
@@ -34,7 +57,7 @@ log(model)
 # log model.i, model.str, model.f
 
 vue.config.slient = true
-# discard window.setInterval(proc() = 
+# discard window.setInterval(proc() =
 #     model.str = "time: $# $#"%[getDateStr(), getClockStr()],
 # 1000)
 
@@ -44,7 +67,7 @@ nextTick(()=>log("nextTick123"))
 # set(v, "b", 456)
 # delete(v, "b", 456)
 log("xxxx", "zzzzzzz")
-config.slient = true    
+config.slient = true
 log(version)
 window.status = "asdf"
 log(window.status)

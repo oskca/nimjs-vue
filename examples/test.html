@@ -7,9 +7,12 @@
             height: <span v-text="height"></span> <br>
             <input type="text" v-model="str">
             <button @click="click">click</button><br>
+            <div v-my-directive="str"></div>
             <ul>
-               <li v-for="i in list">{{i['Field0']}}  {{i['Field1']}}</li> 
+               <li v-for="i in list">{{i['Field0']}}  {{i['Field1']}}</li>
             </ul>
+            <my show-name="world"></my>
+            <my :show-name="'world2'"></my>
         </div>
     </body>
     <script src="vue@2.3.3.js"></script>
