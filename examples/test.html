@@ -1,0 +1,17 @@
+<html>
+    <body>
+        <div id="id">
+            i: <span v-text="i"></span> <br>
+            str: <span v-text="str"></span> <br>
+            width: <span v-text="width"></span> <br>
+            height: <span v-text="height"></span> <br>
+            <input type="text" v-model="str">
+            <button @click="click">click</button><br>
+            <ul>
+               <li v-for="i in list">{{i['Field0']}}  {{i['Field1']}}</li> 
+            </ul>
+        </div>
+    </body>
+    <script src="vue@2.3.3.js"></script>
+    <script src="test.js"></script>
+</html>
